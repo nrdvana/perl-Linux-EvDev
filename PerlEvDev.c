@@ -61,8 +61,8 @@ SV * PerlEvDev_libevdev_to_obj(struct libevdev *evdev) {
 	if (!evdev) return &PL_sv_undef;
 
 	// The module maintains weak references to all its objects
-	evdev_to_obj= hv_get("Linux::EvDev::_evdev_to_obj", GV_ADD);
-	field= hv_fetch(evdev_to_obj, &evdev, sizeof(&evdev), 1);
+	evdev_to_obj= get_hv("Linux::EvDev::_evdev_to_obj", GV_ADD);
+	field= hv_fetch(evdev_to_obj, (char*)&evdev, sizeof(&evdev), 1);
 	if (!field || !*field)
 		croak("failed to allocate hv entry");
 	if (SvROK(*field))
@@ -71,7 +71,7 @@ SV * PerlEvDev_libevdev_to_obj(struct libevdev *evdev) {
 	// Else create a new wrapper
 	self= newRV_noinc((SV*)newHV());
 	sv_bless(self, gv_stashpv("Linux::EvDev", GV_ADD));
-	PerlEvDev_set_mg_libevdev(self, evdev);
+	PerlEvDev_set_mg(self, &PerlEvDev_libevdev_mg_vtbl, evdev);
 	SvSetSV_nosteal(*field, self);
 	sv_rvweaken(*field);
 	return self;
@@ -84,30 +84,31 @@ void PerlEvDev_obj_destroy(SV *obj) {
 	// Ignore NULL pointers and thngs that aren't references
 	if (!obj || !SvROK(obj)) return;
 	// Get libevdev reference, or ignore it
-	evdev= PerlEvDev_mg_get_libevdev(obj);
+	evdev= PerlEvDev_get_mg_libevdev(obj);
 	if (!evdev) return;
 	// Remove it from the _evdev_to_obj
-	evdev_to_obj= hv_get("Linux::EvDev::_evdev_to_obj", GV_ADD);
-	hv_delete(evdev_to_obj, &evdev, sizeof(&evdev), G_DISCARD);
+	evdev_to_obj= get_hv("Linux::EvDev::_evdev_to_obj", GV_ADD);
+	hv_delete(evdev_to_obj, (char*)&evdev, sizeof(&evdev), G_DISCARD);
 	// Detach the pointer
-	PerlEvDev_set_mg_libevdev(obj, NULL);
+	PerlEvDev_set_mg(obj, &PerlEvDev_libevdev_mg_vtbl, NULL);
 	// Then free it
 	libevdev_free(evdev);
 	// rebless the object
 	sv_bless(obj, gv_stashpv("Linux::EvDev::Freed", GV_ADD));
 	// set reference to undef
-	SvSetSv_nosteal(obj, &PL_sv_undef);
+	SvSetSV_nosteal(obj, &PL_sv_undef);
 }
 
 /* gets called when the blessed HV goes out of scope */
 int PerlEvDev_mg_free_libevdev(pTHX_ SV *sv, MAGIC* mg) {
 	struct libevdev *evdev= (struct libevdev*) mg->mg_ptr;
+	HV *evdev_to_obj;
 	mg->mg_ptr= NULL;
 	if (evdev) {
 		libevdev_free(evdev);
 		// Remove it from the _evdev_to_obj
-		evdev_to_obj= hv_get("Linux::EvDev::_evdev_to_obj", GV_ADD);
-		hv_delete(evdev_to_obj, &evdev, sizeof(&evdev), G_DISCARD);
+		evdev_to_obj= get_hv("Linux::EvDev::_evdev_to_obj", GV_ADD);
+		hv_delete(evdev_to_obj, (char*)&evdev, sizeof(&evdev), G_DISCARD);
 	}
 	return 0;
 }

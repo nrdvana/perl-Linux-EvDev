@@ -23,13 +23,13 @@ my $dep= ExtUtils::Depends->new('Linux::EvDev');
 
 #my %libevdev_info= Alien::LibEvDev->find_libevdev();
 my %libevdev_info= (
-	ldflags => '-levdev'
-	cflags  => '-I/usr/include/libevdev-1.0'
+	ldflags => [ '-levdev' ],
+	cflags  => [ '-I/usr/include/libevdev-1.0' ],
 );
 
 $dep->set_libs(join ' ', @{ $libevdev_info{ldflags} });
 $dep->set_inc(join ' ', @{ $libevdev_info{cflags} });
-$dep->add_c('EvDev_internal.c');
+$dep->add_c('PerlEvDev.c');
 $dep->add_xs('EvDev.xs');
 $dep->add_pm(map { my $n= $_; $n =~ s/^lib/\$(INST_LIB)/; $_ => $n } <lib/*/*.pm>, <lib/*/*/*.pm>);
 $dep->add_typemaps('typemap');

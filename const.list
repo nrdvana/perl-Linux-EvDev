@@ -1,18 +1,18 @@
 read_flag
-	i --- --- READ_FLAG_SYNC
-	i --- --- READ_FLAG_NORMAL
-	i --- --- READ_FLAG_FORCE_SYNC
-	i --- --- READ_FLAG_BLOCKING
+	i --- --- LIBEVDEV_READ_FLAG_SYNC
+	i --- --- LIBEVDEV_READ_FLAG_NORMAL
+	i --- --- LIBEVDEV_READ_FLAG_FORCE_SYNC
+	i --- --- LIBEVDEV_READ_FLAG_BLOCKING
 log_priority
-	i --- --- LOG_ERROR
-	i --- --- LOG_INFO
-	i --- --- LOG_DEBUG
+	i --- --- LIBEVDEV_LOG_ERROR
+	i --- --- LIBEVDEV_LOG_INFO
+	i --- --- LIBEVDEV_LOG_DEBUG
 grab_mode
-	i --- --- GRAB
-	i --- --- UNGRAB
+	i --- --- LIBEVDEV_GRAB
+	i --- --- LIBEVDEV_UNGRAB
 read_status
-	i --- --- READ_STATUS_SUCCESS
-	i --- --- READ_STATUS_SYNC
+	i --- --- LIBEVDEV_READ_STATUS_SUCCESS
+	i --- --- LIBEVDEV_READ_STATUS_SYNC
 led_value
-	i --- --- LED_ON
-	i --- --- LED_OFF
+	i --- --- LIBEVDEV_LED_ON
+	i --- --- LIBEVDEV_LED_OFF

@@ -3,6 +3,7 @@ use 5.008001;
 use strict;
 use warnings;
 use Carp;
+use Exporter 'import';
 
 # ABSTRACT: Wrapper for libevdev
 # VERSION
@@ -17,7 +18,8 @@ our %EXPORT_TAGS= (
   read_status => [qw( READ_STATUS_SUCCESS READ_STATUS_SYNC )],
 # END GENERATED XS CONSTANT LIST
 );
-$EXPORT_TAGS{constants}= [ map @{$EXPORT_TAGS{$_}}, keys %EXPORT_TAGS ];
+$EXPORT_TAGS{constants}= [ map { @$_ } values %EXPORT_TAGS ];
+our @EXPORT_OK= @{$EXPORT_TAGS{constants}};
 require XSLoader;
 XSLoader::load("Linux::EvDev", $Linux::EvDev::VERSION);
 
