@@ -1,0 +1,13 @@
+TYPEMAP
+struct libevdev*         O_LIBEVDEV
+
+INPUT
+O_LIBEVDEV
+	struct libevdev *evdev= PerlEvDev_get_mg_libevdev($arg);
+    if (!evdev) croak(\"argument is not a Linux::EvDev instance\");
+	$var= evdev;
+
+OUTPUT
+O_LIBEVDEV
+	$arg = $var? PerlEvDev_libevdev_to_obj($var) : &PL_sv_undef;
+

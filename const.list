@@ -1,0 +1,18 @@
+read_flag
+	i --- --- READ_FLAG_SYNC
+	i --- --- READ_FLAG_NORMAL
+	i --- --- READ_FLAG_FORCE_SYNC
+	i --- --- READ_FLAG_BLOCKING
+log_priority
+	i --- --- LOG_ERROR
+	i --- --- LOG_INFO
+	i --- --- LOG_DEBUG
+grab_mode
+	i --- --- GRAB
+	i --- --- UNGRAB
+read_status
+	i --- --- READ_STATUS_SUCCESS
+	i --- --- READ_STATUS_SYNC
+led_value
+	i --- --- LED_ON
+	i --- --- LED_OFF
