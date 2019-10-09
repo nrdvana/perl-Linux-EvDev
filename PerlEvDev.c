@@ -113,6 +113,60 @@ int PerlEvDev_mg_free_libevdev(pTHX_ SV *sv, MAGIC* mg) {
 	return 0;
 }
 
+struct input_event *PerlEvDev_coerce_to_input_event(SV *sv) {
+	struct input_event ie;
+	size_t len;
+	// There are two types of param allowed.  If it is a ref to a non-blessed scalar,
+	// then use that scalar as the buffer, widening if needed.
+	// If it is a ref to a blessed Linux::EvDev::Event, then use it, widening if needed.
+	// Else, overwrite the scalar with a ref to a new blessed PV.
+	if (SvROK(sv) && (!sv_isobject(sv) || sv_derived_from(sv, "Linux::EvDev::Event"))) {
+		if (!SvPOK(SvRV(sv))) {
+			memset(&ie, sizeof(ie), 0);
+			sv_setpvn(SvRV(sv), (char*)&ie, sizeof(ie));
+		}
+		else {
+			SvPVbyte_force(SvRV(sv), len);
+			if (len < sizeof(ie)) {
+				SvGROW(sv, sizeof(ie)+1);
+				SvCUR_set(sv, sizeof(ie));
+			}
+		}
+	}
+	else {
+		memset(&ie, sizeof(ie), 0);
+		sv_setref_pvn(sv, "Linux::EvDev::Event", (char*)&ie, sizeof(ie));
+	}
+	return (struct input_event*) SvPVX(SvRV(sv));
+}
+
+struct input_absinfo *PerlEvDev_coerce_to_input_absinfo(SV *sv) {
+	struct input_absinfo ia;
+	size_t len;
+	// There are two types of param allowed.  If it is a ref to a non-blessed scalar,
+	// then use that scalar as the buffer, widening if needed.
+	// If it is a ref to a blessed Linux::EvDev::Event, then use it, widening if needed.
+	// Else, overwrite the scalar with a ref to a new blessed PV.
+	if (SvROK(sv) && (!sv_isobject(sv) || sv_derived_from(sv, "Linux::EvDev::AbsInfo"))) {
+		if (!SvPOK(SvRV(sv))) {
+			memset(&ia, sizeof(ia), 0);
+			sv_setpvn(SvRV(sv), (char*)&ia, sizeof(ia));
+		}
+		else {
+			SvPVbyte_force(SvRV(sv), len);
+			if (len < sizeof(ia)) {
+				SvGROW(sv, sizeof(ia)+1);
+				SvCUR_set(sv, sizeof(ia));
+			}
+		}
+	}
+	else {
+		memset(&ia, sizeof(ia), 0);
+		sv_setref_pvn(sv, "Linux::EvDev::AbsInfo", (char*)&ia, sizeof(ia));
+	}
+	return (struct input_absinfo*) SvPVX(SvRV(sv));
+}
+
 /*------------------------------------------------------------------------------------------------
  * Set up the vtable structs for applying magic
  */

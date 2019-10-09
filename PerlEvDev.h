@@ -9,3 +9,5 @@ extern void* PerlEvDev_get_mg(SV *obj, MGVTBL *mg_vtbl);
 #define PerlEvDev_get_mg_libevdev(obj)      ((struct libevdev*) PerlEvDev_get_mg(obj, &PerlEvDev_libevdev_mg_vtbl))
 extern SV * PerlEvDev_libevdev_to_obj(struct libevdev *inst);
 extern void PerlEvDev_obj_destroy(SV * evdev);
+extern struct input_event *PerlEvDev_coerce_to_input_event(SV *sv);
+extern struct input_absinfo *PerlEvDev_coerce_to_input_absinfo(SV *sv);

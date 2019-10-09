@@ -1,5 +1,7 @@
 TYPEMAP
 struct libevdev*         O_LIBEVDEV
+struct input_event*      O_INPUT_EVENT
+struct input_absinfo*    O_INPUT_ABSINFO
 
 INPUT
 O_LIBEVDEV
@@ -11,3 +13,10 @@ OUTPUT
 O_LIBEVDEV
 	$arg = $var? PerlEvDev_libevdev_to_obj($var) : &PL_sv_undef;
 
+INPUT
+O_INPUT_EVENT
+	$var= PerlEvDev_coerce_to_input_event($arg);
+
+INPUT
+O_INPUT_ABSINFO
+	$var= PerlEvDev_coerce_to_input_absinfo($arg);
